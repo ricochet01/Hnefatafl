@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+
+<Pane fx:id="mainBoardPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hr.mperhoc.hnefatafl.controller.GameController">
+    <children>
+        <Button fx:id="newGameButton" layoutX="804.0" layoutY="80.0" mnemonicParsing="false" onAction="#newGame" prefHeight="35.0" prefWidth="206.0" text="New" />
+        <Button fx:id="loadGameButton" layoutX="804.0" layoutY="149.0" mnemonicParsing="false" onAction="#loadGame" prefHeight="35.0" prefWidth="206.0" text="Load" />
+        <Button fx:id="saveGameButton" layoutX="804.0" layoutY="219.0" mnemonicParsing="false" onAction="#saveGame" prefHeight="35.0" prefWidth="206.0" text="Save" />
+        <Button fx:id="exportDocButton" layoutX="804.0" layoutY="372.0" mnemonicParsing="false" onAction="#exportDocs" prefHeight="35.0" prefWidth="206.0" text="Export documentation" />
+        <AnchorPane fx:id="boardPane" layoutX="14.0" layoutY="14.0" prefHeight="750.0" prefWidth="750.0" />
+      <Button fx:id="howToPlayButton" layoutX="804.0" layoutY="295.0" mnemonicParsing="false" onAction="#showGameTutorial" prefHeight="35.0" prefWidth="206.0" text="How to play" />
+    </children>
+</Pane>
