@@ -51,6 +51,7 @@ public class Board implements Serializable {
     private void generatePieces() {
         pieces = new Piece[WIDTH * HEIGHT];
         currentTurn = PieceType.ATTACKER;
+        winner = null;
 
         for (int y = 0; y < HEIGHT; y++) {
             for (int x = 0; x < WIDTH; x++) {

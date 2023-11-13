@@ -1,8 +1,7 @@
 package hr.mperhoc.hnefatafl.util;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -36,7 +35,6 @@ public class DocumentationUtils {
                 String reducedClassFilePath =
                         classFilePath.substring(1, classFilePath.lastIndexOf('.'));
                 String fullyQualifiedName = reducedClassFilePath.replace('\\', '.');
-                //System.out.println("FQN: " + fullyQualifiedName);
 
                 headerHtml += "<h2>" + fullyQualifiedName + "</h2>";
 
@@ -66,11 +64,73 @@ public class DocumentationUtils {
                         headerHtml += "final ";
                     }
 
-                    headerHtml += field.getType().getTypeName() + " ";
-
+                    headerHtml += field.getType().getSimpleName() + " ";
                     headerHtml += field.getName() + "\n";
-
                     headerHtml += "</h3>";
+                }
+
+                Constructor[] constructors = deserializedClass.getConstructors();
+                for (Constructor c : constructors) {
+                    headerHtml += "<h3>";
+
+                    int modifiers = c.getModifiers();
+
+                    if (Modifier.isPublic(modifiers)) {
+                        headerHtml += "public ";
+                    } else if (Modifier.isPrivate(modifiers)) {
+                        headerHtml += "private ";
+                    } else if (Modifier.isProtected(modifiers)) {
+                        headerHtml += "protected ";
+                    }
+
+                    headerHtml += c.getName() + "(";
+                    Parameter[] params = c.getParameters();
+                    for (int i = 0; i < params.length; i++) {
+                        Parameter p = params[i];
+
+                        headerHtml += p.getType().getSimpleName() + " " + p.getName();
+                        if (i < params.length - 1) headerHtml += ", ";
+                    }
+
+                    headerHtml += ")</h3>";
+                }
+
+                Method[] methods = deserializedClass.getDeclaredMethods();
+                for (Method m : methods) {
+                    headerHtml += "<h3>";
+
+                    int modifiers = m.getModifiers();
+
+                    if (Modifier.isPublic(modifiers)) {
+                        headerHtml += "public ";
+                    } else if (Modifier.isPrivate(modifiers)) {
+                        headerHtml += "private ";
+                    } else if (Modifier.isProtected(modifiers)) {
+                        headerHtml += "protected ";
+                    }
+
+                    if (Modifier.isStatic(modifiers)) {
+                        headerHtml += "static ";
+                    }
+
+                    if (Modifier.isFinal(modifiers)) {
+                        headerHtml += "final ";
+                    }
+
+                    Class<?> returnType = m.getReturnType();
+                    headerHtml += returnType.getSimpleName() + " ";
+
+                    headerHtml += m.getName() + "(";
+                    Parameter[] params = m.getParameters();
+
+                    for (int i = 0; i < params.length; i++) {
+                        Parameter p = params[i];
+
+                        headerHtml += p.getType().getSimpleName() + " " + p.getName();
+                        if (i < params.length - 1) headerHtml += ", ";
+                    }
+
+                    headerHtml += ")</h3>";
                 }
             }
 
