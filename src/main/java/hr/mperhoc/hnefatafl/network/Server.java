@@ -7,6 +7,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class Server {
     public static final int PORT = 6502;
@@ -15,6 +17,12 @@ public class Server {
     private Thread thread;
     private boolean listening;
     private Board currentGameState;
+
+    private Map<String, String> connectedUsers;
+
+    public Server() {
+        connectedUsers = new TreeMap<>();
+    }
 
     public synchronized void start() {
         try {

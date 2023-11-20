@@ -1,11 +1,14 @@
 package hr.mperhoc.hnefatafl.util;
 
+import hr.mperhoc.hnefatafl.Game;
 import hr.mperhoc.hnefatafl.board.Board;
 import hr.mperhoc.hnefatafl.board.Tile;
 import hr.mperhoc.hnefatafl.piece.Piece;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.ColumnConstraints;
@@ -13,8 +16,11 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 public final class GUIUtils {
     private static final int MOVE_MARKER_RADIUS = 8;
@@ -127,5 +133,19 @@ public final class GUIUtils {
         }
 
         return pieceImages;
+    }
+
+    // We have to pass any scene object so that it can reach the primary stage
+    public static void loadScene(Node sceneObject, String name) {
+        Parent newRoot = null;
+
+        try {
+            newRoot = FXMLLoader.load(Objects.requireNonNull(Game.class.getResource(name)));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        Stage primaryStage = (Stage) sceneObject.getScene().getWindow();
+        primaryStage.getScene().setRoot(newRoot);
     }
 }
