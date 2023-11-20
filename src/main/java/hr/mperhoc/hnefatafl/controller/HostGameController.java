@@ -1,17 +1,12 @@
 package hr.mperhoc.hnefatafl.controller;
 
-import hr.mperhoc.hnefatafl.Game;
 import hr.mperhoc.hnefatafl.util.GUIUtils;
+import hr.mperhoc.hnefatafl.util.NetworkUtils;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
 
-import java.io.IOException;
-import java.util.Objects;
 
 public class HostGameController {
     @FXML
@@ -27,7 +22,16 @@ public class HostGameController {
     @FXML
     private Button backButton;
 
+    public void initialize() {
+        ipAddressTextField.setText(NetworkUtils.getLocalAddress());
+        onlineIpAddressTextField.setText(NetworkUtils.getPublicAddress());
+    }
+
     public void backToMainMenu() {
         GUIUtils.loadScene(backButton, "menu-screen.fxml");
+    }
+
+    public void hostGame() {
+        
     }
 }

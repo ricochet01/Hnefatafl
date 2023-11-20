@@ -43,7 +43,7 @@
             <Font size="26.0" />
          </font>
       </Label>
-      <Button fx:id="hostServerButton" layoutX="681.0" layoutY="589.0" mnemonicParsing="false" text="Host!">
+      <Button fx:id="hostServerButton" layoutX="681.0" layoutY="589.0" mnemonicParsing="false" onAction="#hostGame" text="Host!">
          <font>
             <Font size="26.0" />
          </font>

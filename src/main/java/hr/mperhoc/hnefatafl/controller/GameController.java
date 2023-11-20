@@ -3,12 +3,11 @@ package hr.mperhoc.hnefatafl.controller;
 import hr.mperhoc.hnefatafl.board.Board;
 import hr.mperhoc.hnefatafl.board.Tile;
 import hr.mperhoc.hnefatafl.board.state.VictoryChecker;
+import hr.mperhoc.hnefatafl.network.Client;
+import hr.mperhoc.hnefatafl.network.Server;
 import hr.mperhoc.hnefatafl.piece.Piece;
 import hr.mperhoc.hnefatafl.piece.PieceType;
-import hr.mperhoc.hnefatafl.util.DocumentationUtils;
-import hr.mperhoc.hnefatafl.util.FileUtils;
-import hr.mperhoc.hnefatafl.util.GUIUtils;
-import hr.mperhoc.hnefatafl.util.DialogUtils;
+import hr.mperhoc.hnefatafl.util.*;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.scene.control.Button;
@@ -50,6 +49,11 @@ public class GameController {
         boardPane.getChildren().add(boardGrid);
 
         init();
+
+        Client client = new Client(NetworkUtils.getLocalAddress(), Server.PORT);
+        client.connect(PieceType.ATTACKER);
+
+        client.disconnect();
     }
 
     public void newGame() {
