@@ -11,10 +11,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.*;
 
 public class Server {
     public static final int PORT = 6502;
@@ -23,10 +20,14 @@ public class Server {
     private Thread thread;
     private boolean listening;
     private Board currentGameState;
-    private TreeSet<User> connectedUsers;
+    private Set<User> connectedUsers;
 
     public Server() {
-        connectedUsers = new TreeSet<>();
+        connectedUsers = new HashSet<>();
+    }
+
+    public Set<User> getConnectedUsers() {
+        return connectedUsers;
     }
 
     public synchronized void start() {
@@ -62,7 +63,7 @@ public class Server {
 
                 process(connectedClient);
             } catch (IOException e) {
-                e.printStackTrace();
+                // e.printStackTrace();
             }
         }
     }
@@ -71,43 +72,50 @@ public class Server {
         String ip = connectedClient.getInetAddress().getHostAddress();
         int port = connectedClient.getPort();
 
-        try (ObjectInputStream ois = new ObjectInputStream(connectedClient.getInputStream());
-             ObjectOutputStream oos = new ObjectOutputStream(connectedClient.getOutputStream())) {
-
+        try (ObjectInputStream ois = new ObjectInputStream(connectedClient.getInputStream())) {
             Packet packet = (Packet) ois.readObject();
-            handlePacket(packet, ip, port);
+            handlePacket(packet, ip, port, connectedClient);
         } catch (IOException | ClassNotFoundException e) {
             // This usually prints an EOFException when a connection closes
             // e.printStackTrace();
         }
     }
 
-    private void handlePacket(Packet packet, String ip, int port) {
+    private void handlePacket(Packet packet, String ip, int port, Socket client) {
         switch (packet.getHeader()) {
             case PacketHeaders.LOGIN -> {
                 ConnectionPacket connPacket = (ConnectionPacket) packet;
                 User user = new User(ip, port, connPacket.getPlayerSide());
-                addUser(user);
+                addUser(user, client);
             }
         }
     }
 
-    private void send(Packet packet) {
+    private void send(Packet packet, Socket client) {
+        ObjectOutputStream oos = null;
 
+        try {
+            oos = new ObjectOutputStream(client.getOutputStream());
+            oos.writeObject(packet);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    private void addUser(User user) {
-        if (connectedUsers.size() > 0) {
-            User connected = connectedUsers.getFirst();
+    private void addUser(User user, Socket client) {
+        if (!connectedUsers.isEmpty()) {
+            User connected = connectedUsers.iterator().next();
             PieceType secondSide = connected.getSide() == PieceType.ATTACKER
                     ? PieceType.DEFENDER : PieceType.ATTACKER;
 
             user.setSide(secondSide);
             // Acknowledge the second user's connection and send him his play side
-            send(new ConnectionPacket(secondSide));
+            send(new ConnectionPacket(secondSide), client);
         }
 
         // The user sides match
         connectedUsers.add(user);
+
+//        System.out.println("added user on server");
     }
 }

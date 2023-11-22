@@ -22,11 +22,11 @@ public class MainMenuController {
     }
 
     public void hostGame() {
-        GUIUtils.loadScene(playOfflineButton, "host-screen.fxml");
+        GUIUtils.loadScene(hostGameButton, "host-screen.fxml");
     }
 
     public void joinGame() {
-
+        GUIUtils.loadScene(joinGameButton, "join-screen.fxml");
     }
 
     public void quitGame() {

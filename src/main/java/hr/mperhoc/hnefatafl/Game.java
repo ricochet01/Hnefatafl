@@ -1,6 +1,8 @@
 package hr.mperhoc.hnefatafl;
 
+import hr.mperhoc.hnefatafl.network.Client;
 import hr.mperhoc.hnefatafl.network.Server;
+import hr.mperhoc.hnefatafl.piece.PieceType;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -14,6 +16,7 @@ public class Game extends Application {
     public static final int HEIGHT = 768;
 
     private static Server server;
+    private static Client client;
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -24,8 +27,20 @@ public class Game extends Application {
         stage.show();
     }
 
+    @Override
+    public void stop() {
+        disconnect();
+        stopServer();
+    }
+
     public static boolean isHost() {
         return server != null;
+    }
+
+    public static boolean isInMultiplayer() {
+        if (client == null) return false;
+
+        return client.isConnected();
     }
 
     public static void startServer() {
@@ -34,8 +49,30 @@ public class Game extends Application {
     }
 
     public static void stopServer() {
-        server.stop();
-        server = null;
+        if (server != null) {
+            server.stop();
+            server = null;
+        }
+    }
+
+    public static void connect(String ip) {
+        connect(ip, null);
+    }
+
+    public static void disconnect() {
+        if (client != null) {
+            client.disconnect();
+            client = null;
+        }
+    }
+
+    public static void connect(String ip, PieceType side) {
+        client = new Client(ip, Server.PORT);
+        client.connect(side);
+    }
+
+    public static boolean canStartMultiplayerGame() {
+        return server.getConnectedUsers().size() > 1;
     }
 
     public static void main(String[] args) {

@@ -12,7 +12,10 @@
       <change beforePath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/controller/MainMenuController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/controller/MainMenuController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/network/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/network/Client.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/network/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/network/Server.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/hr/mperhoc/hnefatafl/host-screen.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/hr/mperhoc/hnefatafl/host-screen.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/network/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/network/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/network/packet/ConnectionPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/network/packet/ConnectionPacket.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/network/packet/Packet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/network/packet/Packet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/util/DialogUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/util/DialogUtils.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,15 +51,15 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/Users/Korisnik/Downloads/TicTacToe-3RP3_-_5th_version/TicTacToe-3RP3",
-    "settings.editor.selected.configurable": "Errors"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Korisnik/Downloads/TicTacToe-3RP3_-_5th_version/TicTacToe-3RP3&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;Errors&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="Hnefatafl [clean]" type="MavenRunConfiguration" factoryName="Maven" singleton="false" temporary="true">
       <MavenSettings>

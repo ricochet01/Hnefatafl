@@ -3,8 +3,10 @@ package hr.mperhoc.hnefatafl.util;
 import hr.mperhoc.hnefatafl.Game;
 import hr.mperhoc.hnefatafl.piece.PieceType;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Modality;
 
 import java.io.File;
 
@@ -23,6 +25,18 @@ public class DialogUtils {
         alert.setContentText(content);
         alert.setHeaderText(headerText.isEmpty() ? "Message" : headerText);
         alert.showAndWait();
+    }
+
+    public static Alert getHostWaitDialog() {
+        String content = "Waiting for the second player to join...";
+        ButtonType cancel = new ButtonType("Cancel");
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION, content, cancel);
+        alert.setTitle("Host server");
+        alert.setHeaderText("Host server");
+        alert.show();
+
+        return alert;
     }
 
     public static void showWinnerDialog(PieceType side) {

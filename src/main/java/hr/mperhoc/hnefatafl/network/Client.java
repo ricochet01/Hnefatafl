@@ -3,12 +3,14 @@ package hr.mperhoc.hnefatafl.network;
 import hr.mperhoc.hnefatafl.board.Board;
 import hr.mperhoc.hnefatafl.network.packet.ConnectionPacket;
 import hr.mperhoc.hnefatafl.network.packet.Packet;
+import hr.mperhoc.hnefatafl.network.packet.PacketHeaders;
 import hr.mperhoc.hnefatafl.piece.Piece;
 import hr.mperhoc.hnefatafl.piece.PieceType;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -20,6 +22,7 @@ public class Client {
 
     private boolean listening;
     private Thread thread;
+    private boolean connected = false;
 
     public Client(String ipAddress, int port) {
         this.ipAddress = ipAddress;
@@ -60,19 +63,25 @@ public class Client {
     }
 
     private void process() {
-        try (ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream())) {
-
+        try (ObjectInputStream ois = new ObjectInputStream(socket.getInputStream())) {
             // Accept packets here
             Packet packet = (Packet) ois.readObject();
             handlePacket(packet);
         } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+            // e.printStackTrace();
         }
     }
 
     private void handlePacket(Packet packet) {
+        switch (packet.getHeader()) {
+            case PacketHeaders.LOGIN -> {
+                connected = true;
+            }
+        }
+    }
 
+    public boolean isConnected() {
+        return connected;
     }
 
     private void sendLoginPacket(PieceType side) {
@@ -80,6 +89,13 @@ public class Client {
     }
 
     private void send(Packet packet) {
+        ObjectOutputStream oos = null;
 
+        try {
+            oos = new ObjectOutputStream(socket.getOutputStream());
+            oos.writeObject(packet);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

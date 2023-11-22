@@ -8,6 +8,8 @@ import hr.mperhoc.hnefatafl.network.Server;
 import hr.mperhoc.hnefatafl.piece.Piece;
 import hr.mperhoc.hnefatafl.piece.PieceType;
 import hr.mperhoc.hnefatafl.util.*;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.scene.control.Button;
@@ -49,11 +51,11 @@ public class GameController {
         boardPane.getChildren().add(boardGrid);
 
         init();
+    }
 
-        Client client = new Client(NetworkUtils.getLocalAddress(), Server.PORT);
-        client.connect(PieceType.ATTACKER);
-
-        client.disconnect();
+    @FXML
+    public void exitApplication(ActionEvent event) {
+        Platform.exit();
     }
 
     public void newGame() {
