@@ -20,6 +20,10 @@ public class JoinScreenController {
     }
 
     public void joinGame() {
-        Game.connect(ipAddressTextField.getText());
+        // We have successfully joined a game
+        if (Game.connect(ipAddressTextField.getText())) {
+            // Switch to the game board
+            GUIUtils.loadScene(connectButton, "main-screen.fxml");
+        }
     }
 }

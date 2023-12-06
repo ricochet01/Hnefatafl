@@ -1,35 +1,36 @@
 package hr.mperhoc.hnefatafl.network;
 
 import hr.mperhoc.hnefatafl.board.Board;
-import hr.mperhoc.hnefatafl.network.packet.ConnectionPacket;
-import hr.mperhoc.hnefatafl.network.packet.Packet;
-import hr.mperhoc.hnefatafl.network.packet.PacketHeaders;
-import hr.mperhoc.hnefatafl.piece.Piece;
+import hr.mperhoc.hnefatafl.controller.GameController;
+import hr.mperhoc.hnefatafl.network.packet.*;
 import hr.mperhoc.hnefatafl.piece.PieceType;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class Client {
+    public static final int PORT = 9456;
+
     // The IP address which we're connecting to
     private String ipAddress;
+    // The server port
     private int port;
     private Socket socket;
 
     private boolean listening;
     private Thread thread;
     private boolean connected = false;
+    private PieceType playerSide;
+
 
     public Client(String ipAddress, int port) {
         this.ipAddress = ipAddress;
         this.port = port;
     }
 
-    public synchronized boolean connect(PieceType side) {
+    public synchronized boolean connect() {
         try {
             socket = new Socket(ipAddress, port);
         } catch (IOException e) {
@@ -37,11 +38,12 @@ public class Client {
             return false;
         }
 
-        sendLoginPacket(side);
-
         listening = true;
         thread = new Thread(this::listen);
         thread.start();
+
+        sendLoginPacket();
+//        send(new PingPacket());
 
         return true;
     }
@@ -57,42 +59,68 @@ public class Client {
     }
 
     private void listen() {
-        while (listening) {
-            process();
+        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+            System.out.println("Client listening on port: " + serverSocket.getLocalPort());
+
+            while (listening) {
+                Socket clientSocket = serverSocket.accept();
+                System.out.println("Client connected from port: " + clientSocket.getPort());
+                process(clientSocket);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    private void process() {
-        try (ObjectInputStream ois = new ObjectInputStream(socket.getInputStream())) {
-            // Accept packets here
+    private void process(Socket client) {
+        try (ObjectInputStream ois = new ObjectInputStream(client.getInputStream());
+             ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream())) {
             Packet packet = (Packet) ois.readObject();
             handlePacket(packet);
         } catch (IOException | ClassNotFoundException e) {
-            // e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
     private void handlePacket(Packet packet) {
         switch (packet.getHeader()) {
             case PacketHeaders.LOGIN -> {
+                this.playerSide = ((ConnectionPacket) packet).getPlayerSide();
                 connected = true;
+                System.out.println("CLIENT has connected");
+            }
+            case PacketHeaders.GAME_STATE -> {
+                GameStatePacket gameStatePacket = (GameStatePacket) packet;
+                GameController.updateGameState(gameStatePacket.getBoard());
+            }
+            default -> {
+                throw new RuntimeException("Invalid packet header!");
             }
         }
+    }
+
+    public PieceType getPlayerSide() {
+        return playerSide;
     }
 
     public boolean isConnected() {
         return connected;
     }
 
-    private void sendLoginPacket(PieceType side) {
-        send(new ConnectionPacket(side));
+    public void sendGameStatePacket(Board board) {
+        Packet packet = new GameStatePacket(board);
+        send(packet);
+    }
+
+    private void sendLoginPacket() {
+        System.out.println("Sending login packet");
+        // It's null because we don't know the player side
+        send(new ConnectionPacket(null));
     }
 
     private void send(Packet packet) {
-        ObjectOutputStream oos = null;
-
-        try {
-            oos = new ObjectOutputStream(socket.getOutputStream());
+        try (Socket socket = new Socket(ipAddress, Server.PORT);
+             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream())) {
             oos.writeObject(packet);
         } catch (IOException e) {
             throw new RuntimeException(e);

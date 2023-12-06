@@ -1,5 +1,6 @@
 package hr.mperhoc.hnefatafl;
 
+import hr.mperhoc.hnefatafl.board.Board;
 import hr.mperhoc.hnefatafl.network.Client;
 import hr.mperhoc.hnefatafl.network.Server;
 import hr.mperhoc.hnefatafl.piece.PieceType;
@@ -8,6 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.util.List;
 import java.io.IOException;
 
 public class Game extends Application {
@@ -33,19 +35,15 @@ public class Game extends Application {
         stopServer();
     }
 
-    public static boolean isHost() {
-        return server != null;
-    }
-
     public static boolean isInMultiplayer() {
         if (client == null) return false;
 
         return client.isConnected();
     }
 
-    public static void startServer() {
+    public static void startServer(PieceType selectedSide) {
         server = new Server();
-        server.start();
+        server.start(selectedSide);
     }
 
     public static void stopServer() {
@@ -55,8 +53,8 @@ public class Game extends Application {
         }
     }
 
-    public static void connect(String ip) {
-        connect(ip, null);
+    public static boolean connect(String ip) {
+        return connect(ip, null);
     }
 
     public static void disconnect() {
@@ -66,13 +64,21 @@ public class Game extends Application {
         }
     }
 
-    public static void connect(String ip, PieceType side) {
+    public static boolean connect(String ip, PieceType side) {
         client = new Client(ip, Server.PORT);
-        client.connect(side);
+        return client.connect();
+    }
+
+    public static void sendGameStatePacket(Board board) {
+        client.sendGameStatePacket(board);
+    }
+
+    public static PieceType getPlayerSide() {
+        return client.getPlayerSide();
     }
 
     public static boolean canStartMultiplayerGame() {
-        return server.getConnectedUsers().size() > 1;
+        return server.canStartMultiplayerGame();
     }
 
     public static void main(String[] args) {

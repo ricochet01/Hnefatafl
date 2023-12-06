@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hr.mperhoc.hnefatafl.controller.WaitingPlayerController">
+   <children>
+      <Label layoutX="294.0" layoutY="184.0" text="Waiting for the second player to join...">
+         <font>
+            <Font size="26.0" />
+         </font>
+      </Label>
+      <Button fx:id="cancelButton" layoutX="457.0" layoutY="430.0" mnemonicParsing="false" onAction="#cancelHost" text="Cancel">
+         <font>
+            <Font size="26.0" />
+         </font>
+      </Button>
+   </children>
+</AnchorPane>

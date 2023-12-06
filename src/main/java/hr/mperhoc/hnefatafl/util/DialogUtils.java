@@ -27,18 +27,6 @@ public class DialogUtils {
         alert.showAndWait();
     }
 
-    public static Alert getHostWaitDialog() {
-        String content = "Waiting for the second player to join...";
-        ButtonType cancel = new ButtonType("Cancel");
-
-        Alert alert = new Alert(Alert.AlertType.INFORMATION, content, cancel);
-        alert.setTitle("Host server");
-        alert.setHeaderText("Host server");
-        alert.show();
-
-        return alert;
-    }
-
     public static void showWinnerDialog(PieceType side) {
         showInformationDialog("Winner", String.format("The %s has won the game!", side.name().toLowerCase()));
     }

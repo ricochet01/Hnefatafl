@@ -1,121 +1,95 @@
 package hr.mperhoc.hnefatafl.network;
 
-import hr.mperhoc.hnefatafl.board.Board;
 import hr.mperhoc.hnefatafl.network.packet.ConnectionPacket;
+import hr.mperhoc.hnefatafl.network.packet.GameStatePacket;
 import hr.mperhoc.hnefatafl.network.packet.Packet;
 import hr.mperhoc.hnefatafl.network.packet.PacketHeaders;
 import hr.mperhoc.hnefatafl.piece.PieceType;
+import javafx.application.Platform;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.*;
+import java.io.*;
+import java.net.*;
 
 public class Server {
     public static final int PORT = 6502;
 
-    private ServerSocket socket;
     private Thread thread;
     private boolean listening;
-    private Board currentGameState;
-    private Set<User> connectedUsers;
+    private boolean clientConnected;
+    private PieceType playerSide;
 
-    public Server() {
-        connectedUsers = new HashSet<>();
-    }
-
-    public Set<User> getConnectedUsers() {
-        return connectedUsers;
-    }
-
-    public synchronized void start() {
-        try {
-            this.socket = new ServerSocket(PORT);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public void start(PieceType playerSide) {
+        this.playerSide = playerSide;
 
         listening = true;
+//        Platform.runLater(() -> listen());
         thread = new Thread(this::listen);
         thread.start();
     }
 
-    public synchronized void stop() {
+    public void stop() {
         listening = false;
+        clientConnected = false;
+    }
 
-        try {
-            socket.close();
+    public boolean canStartMultiplayerGame() {
+        return clientConnected;
+    }
+
+    private void listen() {
+        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+            System.out.println("Server listening on port: " + serverSocket.getLocalPort());
+
+            while (listening) {
+                Socket clientSocket = serverSocket.accept();
+                System.out.println("Client connected from port: " + clientSocket.getPort());
+
+                Platform.runLater(() -> process(clientSocket));
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void listen() {
-        while (listening) {
-            try {
-                Socket connectedClient = socket.accept();
-                String ip = connectedClient.getInetAddress().getHostAddress();
-                int port = connectedClient.getPort();
-
-                System.out.println("Client connected from " + ip + ":" + port);
-
-                process(connectedClient);
-            } catch (IOException e) {
-                // e.printStackTrace();
-            }
-        }
-    }
-
     private void process(Socket connectedClient) {
-        String ip = connectedClient.getInetAddress().getHostAddress();
-        int port = connectedClient.getPort();
-
-        try (ObjectInputStream ois = new ObjectInputStream(connectedClient.getInputStream())) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(connectedClient.getOutputStream());
+             ObjectInputStream ois = new ObjectInputStream(connectedClient.getInputStream())) {
             Packet packet = (Packet) ois.readObject();
-            handlePacket(packet, ip, port, connectedClient);
+            handlePacket(packet, connectedClient);
         } catch (IOException | ClassNotFoundException e) {
-            // This usually prints an EOFException when a connection closes
-            // e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
-    private void handlePacket(Packet packet, String ip, int port, Socket client) {
+    private void handlePacket(Packet packet, Socket client) {
         switch (packet.getHeader()) {
             case PacketHeaders.LOGIN -> {
-                ConnectionPacket connPacket = (ConnectionPacket) packet;
-                User user = new User(ip, port, connPacket.getPlayerSide());
-                addUser(user, client);
+                System.out.println("LOGIN packet");
+                clientConnected = true;
+
+                PieceType opponent = playerSide == PieceType.ATTACKER ? PieceType.DEFENDER : PieceType.ATTACKER;
+                send(new ConnectionPacket(opponent), client);
+            }
+            case PacketHeaders.GAME_STATE -> {
+                System.out.println("GAME STATE packet");
+                GameStatePacket gameStatePacket = (GameStatePacket) packet;
+                send(gameStatePacket, client);
+            }
+            case PacketHeaders.PING -> {
+                System.out.println("PING packet");
+            }
+            default -> {
+                throw new RuntimeException("Invalid packet header!");
             }
         }
     }
 
     private void send(Packet packet, Socket client) {
-        ObjectOutputStream oos = null;
-
-        try {
-            oos = new ObjectOutputStream(client.getOutputStream());
+        try (Socket socket = new Socket(client.getInetAddress(), Client.PORT);
+             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream())) {
             oos.writeObject(packet);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private void addUser(User user, Socket client) {
-        if (!connectedUsers.isEmpty()) {
-            User connected = connectedUsers.iterator().next();
-            PieceType secondSide = connected.getSide() == PieceType.ATTACKER
-                    ? PieceType.DEFENDER : PieceType.ATTACKER;
-
-            user.setSide(secondSide);
-            // Acknowledge the second user's connection and send him his play side
-            send(new ConnectionPacket(secondSide), client);
-        }
-
-        // The user sides match
-        connectedUsers.add(user);
-
-//        System.out.println("added user on server");
     }
 }

@@ -1,5 +1,6 @@
 package hr.mperhoc.hnefatafl.controller;
 
+import hr.mperhoc.hnefatafl.Game;
 import hr.mperhoc.hnefatafl.board.Board;
 import hr.mperhoc.hnefatafl.board.Tile;
 import hr.mperhoc.hnefatafl.board.state.VictoryChecker;
@@ -23,7 +24,6 @@ import java.util.List;
 public class GameController {
     @FXML
     private AnchorPane boardPane;
-    private GridPane boardGrid;
 
     @FXML
     private Button newGameButton;
@@ -36,13 +36,17 @@ public class GameController {
     @FXML
     private Button exportDocButton;
 
+    private static GridPane boardGrid;
+
     // Game state
-    private Board board;
+    private static Board board;
     private Piece selectedPiece;
 
     // Legal move markers which remain hidden until the user wants to play a move
     private Circle[] moveMarkers;
-    private ImageView[] pieceImages;
+    private static ImageView[] pieceImages;
+
+    private boolean multiplayer = false;
 
     public void initialize() {
         boardGrid = GUIUtils.createGridPane();
@@ -108,9 +112,11 @@ public class GameController {
         boardGrid.setGridLinesVisible(true);
 
         pieceImages = GUIUtils.createPieceImages(board.getPieces(), boardGrid);
+
+        multiplayer = Game.isInMultiplayer();
     }
 
-    private void regeneratePieceImages() {
+    private static void regeneratePieceImages() {
         // Removing old images
         for (int y = 0; y < Board.HEIGHT; y++) {
             for (int x = 0; x < Board.WIDTH; x++) {
@@ -164,6 +170,11 @@ public class GameController {
         }
     }
 
+    public static void updateGameState(Board board) {
+        GameController.board = board;
+        regeneratePieceImages();
+    }
+
     private void deselectPiece(Pane tile, int x, int y) {
         selectedPiece = null;
         tile.setStyle("-fx-background-color: #" + board.getTile(x, y).getType().getColor());
@@ -172,6 +183,7 @@ public class GameController {
     private void handleOnTileClick(Pane tile) {
         // Disallow any clicks if the game is finished
         if (board.isGameFinished()) return;
+        else if (multiplayer && Game.getPlayerSide() != board.getCurrentTurn()) return;
 
         int xTile = GridPane.getColumnIndex(tile);
         int yTile = GridPane.getRowIndex(tile);
@@ -195,6 +207,8 @@ public class GameController {
                 if (!captured.isEmpty()) {
                     removePieces(captured.toArray(new Piece[0]));
                 }
+
+                if (multiplayer) Game.sendGameStatePacket(board);
 
                 // Check for victories
                 if (VictoryChecker.kingIsCaptured(board)) {
