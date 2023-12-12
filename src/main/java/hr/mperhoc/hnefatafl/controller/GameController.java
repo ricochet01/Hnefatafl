@@ -13,6 +13,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -39,7 +40,7 @@ public class GameController {
     private static GridPane boardGrid;
 
     // Game state
-    private static Board board;
+    private Board board;
     private Piece selectedPiece;
 
     // Legal move markers which remain hidden until the user wants to play a move
@@ -47,6 +48,9 @@ public class GameController {
     private static ImageView[] pieceImages;
 
     private boolean multiplayer = false;
+    // TODO: Reimplement this to have client and server variable into one
+    private Server server;
+    private Client client;
 
     public void initialize() {
         boardGrid = GUIUtils.createGridPane();
@@ -55,11 +59,6 @@ public class GameController {
         boardPane.getChildren().add(boardGrid);
 
         init();
-    }
-
-    @FXML
-    public void exitApplication(ActionEvent event) {
-        Platform.exit();
     }
 
     public void newGame() {
@@ -114,9 +113,26 @@ public class GameController {
         pieceImages = GUIUtils.createPieceImages(board.getPieces(), boardGrid);
 
         multiplayer = Game.isInMultiplayer();
+        // Disables the New, Load and Save buttons
+        if (multiplayer) {
+            disableFileButtons();
+            if (Game.getServer() != null) {
+                this.server = Game.getServer();
+                server.setGameController(this);
+            } else {
+                this.client = Game.getClient();
+                client.setGameController(this);
+            }
+        }
     }
 
-    private static void regeneratePieceImages() {
+    private void disableFileButtons() {
+        newGameButton.setDisable(true);
+        loadGameButton.setDisable(true);
+        saveGameButton.setDisable(true);
+    }
+
+    private void regeneratePieceImages() {
         // Removing old images
         for (int y = 0; y < Board.HEIGHT; y++) {
             for (int x = 0; x < Board.WIDTH; x++) {
@@ -170,14 +186,44 @@ public class GameController {
         }
     }
 
-    public static void updateGameState(Board board) {
-        GameController.board = board;
+    public void updateGameState(Board board) {
+        this.board = board;
         regeneratePieceImages();
+
+        // Check for a winner here
+        checkWinner(false);
     }
 
     private void deselectPiece(Pane tile, int x, int y) {
         selectedPiece = null;
         tile.setStyle("-fx-background-color: #" + board.getTile(x, y).getType().getColor());
+    }
+
+    private PieceType checkWinner(boolean changePlayerTurn) {
+        // Check for victories
+        if (VictoryChecker.kingIsCaptured(board)) {
+            // Victory for the attacker
+            removePieces(board.getKing());
+
+            declareWinner(PieceType.ATTACKER);
+            return PieceType.ATTACKER;
+        } else if (VictoryChecker.kingHasEscaped(board)) {
+            // Victory for the defender
+            declareWinner(PieceType.DEFENDER);
+            return PieceType.DEFENDER;
+        }
+
+        PieceType turnPlayedBy = board.getCurrentTurn();
+        if (changePlayerTurn) board.changeCurrentTurn();
+
+        // The player who just played a move won the game
+        // because the opponent has no legal moves.
+        if (!VictoryChecker.hasLegalMoves(board, board.getCurrentTurn())) {
+            declareWinner(turnPlayedBy);
+            return turnPlayedBy;
+        }
+
+        return null;
     }
 
     private void handleOnTileClick(Pane tile) {
@@ -208,30 +254,9 @@ public class GameController {
                     removePieces(captured.toArray(new Piece[0]));
                 }
 
+                checkWinner(true);
+
                 if (multiplayer) Game.sendGameStatePacket(board);
-
-                // Check for victories
-                if (VictoryChecker.kingIsCaptured(board)) {
-                    // Victory for the attacker
-                    removePieces(board.getKing());
-
-                    declareWinner(PieceType.ATTACKER);
-                    return;
-                } else if (VictoryChecker.kingHasEscaped(board)) {
-                    // Victory for the defender
-                    declareWinner(PieceType.DEFENDER);
-                    return;
-                }
-
-                PieceType turnPlayedBy = board.getCurrentTurn();
-                board.changeCurrentTurn();
-
-                // The player who just played a move won the game
-                // because the opponent has no legal moves.
-                if (!VictoryChecker.hasLegalMoves(board, board.getCurrentTurn())) {
-                    declareWinner(turnPlayedBy);
-                    return;
-                }
 
                 deselectPiece(tile, xTile, yTile);
             } else {
@@ -243,19 +268,22 @@ public class GameController {
         Piece piece = board.getPiece(xTile, yTile);
         if (piece == null) return;
 
-        if (piece.getPieceType() == board.getCurrentTurn() ||
-                (piece.getPieceType() == PieceType.KING && board.getCurrentTurn() == PieceType.DEFENDER)) {
-            selectedPiece = board.getPiece(xTile, yTile);
+        // The legal moves get rendered after the game finished, so we check for that first
+        if (!board.isGameFinished()) {
+            if (piece.getPieceType() == board.getCurrentTurn() ||
+                    (piece.getPieceType() == PieceType.KING && board.getCurrentTurn() == PieceType.DEFENDER)) {
+                selectedPiece = board.getPiece(xTile, yTile);
 
-            // Automatically darken the tile to trigger the hover effect immediately
-            tile.setStyle("-fx-background-color: #" + board.getTile(xTile, yTile).getType().getDarkerColor());
-            GUIUtils.renderLegalMoves(board.getLegalMovePositions(selectedPiece), moveMarkers);
+                // Automatically darken the tile to trigger the hover effect immediately
+                tile.setStyle("-fx-background-color: #" + board.getTile(xTile, yTile).getType().getDarkerColor());
+                GUIUtils.renderLegalMoves(board.getLegalMovePositions(selectedPiece), moveMarkers);
+            }
         }
     }
 
     private void declareWinner(PieceType side) {
-        DialogUtils.showWinnerDialog(side);
         board.setWinner(side);
+        DialogUtils.showWinnerDialog(side);
     }
 
     private void movePieceImage(int oldX, int oldY, int newX, int newY) {

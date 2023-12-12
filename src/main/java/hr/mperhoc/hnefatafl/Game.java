@@ -5,6 +5,7 @@ import hr.mperhoc.hnefatafl.network.Client;
 import hr.mperhoc.hnefatafl.network.Server;
 import hr.mperhoc.hnefatafl.piece.PieceType;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -19,6 +20,7 @@ public class Game extends Application {
 
     private static Server server;
     private static Client client;
+    private static boolean isHost = false;
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -26,24 +28,29 @@ public class Game extends Application {
         Scene scene = new Scene(fxmlLoader.load(), WIDTH, HEIGHT);
         stage.setTitle(TITLE);
         stage.setScene(scene);
+
+        stage.setOnCloseRequest(event -> {
+            Platform.runLater(() -> {
+                System.out.println("Exiting...");
+                if (isInMultiplayer()) {
+                    stopServer();
+                    disconnect();
+                }
+                Platform.exit();
+            });
+        });
+
         stage.show();
     }
 
-    @Override
-    public void stop() {
-        disconnect();
-        stopServer();
-    }
-
     public static boolean isInMultiplayer() {
-        if (client == null) return false;
-
-        return client.isConnected();
+        return client != null || server != null;
     }
 
     public static void startServer(PieceType selectedSide) {
         server = new Server();
         server.start(selectedSide);
+        isHost = true;
     }
 
     public static void stopServer() {
@@ -51,6 +58,14 @@ public class Game extends Application {
             server.stop();
             server = null;
         }
+    }
+
+    public static Server getServer() {
+        return server;
+    }
+
+    public static Client getClient() {
+        return client;
     }
 
     public static boolean connect(String ip) {
@@ -70,10 +85,12 @@ public class Game extends Application {
     }
 
     public static void sendGameStatePacket(Board board) {
-        client.sendGameStatePacket(board);
+        if (server != null) server.sendGameStatePacket(board);
+        else client.sendGameStatePacket(board);
     }
 
     public static PieceType getPlayerSide() {
+        if (server != null) return server.getPlayerSide();
         return client.getPlayerSide();
     }
 
@@ -82,6 +99,6 @@ public class Game extends Application {
     }
 
     public static void main(String[] args) {
-        launch();
+        new Thread(Application::launch).start();
     }
 }

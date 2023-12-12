@@ -4,6 +4,7 @@ import hr.mperhoc.hnefatafl.board.Board;
 import hr.mperhoc.hnefatafl.controller.GameController;
 import hr.mperhoc.hnefatafl.network.packet.*;
 import hr.mperhoc.hnefatafl.piece.PieceType;
+import javafx.application.Platform;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -23,7 +24,7 @@ public class Client {
     private Thread thread;
     private boolean connected = false;
     private PieceType playerSide;
-
+    private GameController game;
 
     public Client(String ipAddress, int port) {
         this.ipAddress = ipAddress;
@@ -31,31 +32,22 @@ public class Client {
     }
 
     public synchronized boolean connect() {
-        try {
-            socket = new Socket(ipAddress, port);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-
         listening = true;
         thread = new Thread(this::listen);
+        thread.setDaemon(true);
         thread.start();
 
         sendLoginPacket();
-//        send(new PingPacket());
 
         return true;
     }
 
     public synchronized void disconnect() {
         listening = false;
+    }
 
-        try {
-            socket.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public void setGameController(GameController game) {
+        this.game = game;
     }
 
     private void listen() {
@@ -64,21 +56,19 @@ public class Client {
 
             while (listening) {
                 Socket clientSocket = serverSocket.accept();
-                System.out.println("Client connected from port: " + clientSocket.getPort());
-                process(clientSocket);
+                Platform.runLater(() -> process(clientSocket));
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 
     private void process(Socket client) {
-        try (ObjectInputStream ois = new ObjectInputStream(client.getInputStream());
-             ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream())) {
+        try (ObjectInputStream ois = new ObjectInputStream(client.getInputStream())) {
             Packet packet = (Packet) ois.readObject();
             handlePacket(packet);
         } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 
@@ -91,7 +81,7 @@ public class Client {
             }
             case PacketHeaders.GAME_STATE -> {
                 GameStatePacket gameStatePacket = (GameStatePacket) packet;
-                GameController.updateGameState(gameStatePacket.getBoard());
+                game.updateGameState(gameStatePacket.getBoard());
             }
             default -> {
                 throw new RuntimeException("Invalid packet header!");
@@ -123,7 +113,7 @@ public class Client {
              ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream())) {
             oos.writeObject(packet);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 }

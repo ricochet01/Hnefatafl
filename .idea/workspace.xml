@@ -9,13 +9,10 @@
       <change beforePath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/Game.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/controller/GameController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/controller/GameController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/controller/HostGameController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/controller/HostGameController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/controller/JoinScreenController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/controller/JoinScreenController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/controller/WaitingPlayerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/controller/WaitingPlayerController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/network/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/network/Client.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/network/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/network/Server.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/network/packet/ConnectionPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/network/packet/ConnectionPacket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/network/packet/Packet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/network/packet/Packet.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/network/packet/PacketHeaders.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/network/packet/PacketHeaders.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/util/DialogUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/util/DialogUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/hr/mperhoc/hnefatafl/host-screen.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/hr/mperhoc/hnefatafl/host-screen.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

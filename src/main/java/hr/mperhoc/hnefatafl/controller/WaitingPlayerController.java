@@ -5,6 +5,7 @@ import hr.mperhoc.hnefatafl.util.GUIUtils;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.stage.WindowEvent;
 
 public class WaitingPlayerController {
     @FXML
@@ -12,9 +13,9 @@ public class WaitingPlayerController {
     private boolean hasPlayerConnected, hostCancelled = false;
 
     public void initialize() {
-        Platform.runLater(() -> {
+        new Thread(() -> {
             while (!hasPlayerConnected || !hostCancelled) {
-                System.out.println("waiting for player");
+                System.out.println("Waiting for player");
 
                 // Check if the second player has joined
                 if (Game.canStartMultiplayerGame()) {
@@ -35,7 +36,7 @@ public class WaitingPlayerController {
             } else {
                 Game.stopServer();
             }
-        });
+        }).start();
     }
 
     public void cancelHost() {
