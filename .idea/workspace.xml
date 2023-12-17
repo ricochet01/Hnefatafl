@@ -9,10 +9,11 @@
       <change beforePath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/Game.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/controller/GameController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/controller/GameController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/controller/HostGameController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/controller/HostGameController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/controller/WaitingPlayerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/controller/WaitingPlayerController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/network/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/network/Client.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/network/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/network/Server.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/hr/mperhoc/hnefatafl/host-screen.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/hr/mperhoc/hnefatafl/host-screen.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/network/packet/PacketHeaders.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/network/packet/PacketHeaders.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/network/packet/PingPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/network/packet/PingPacket.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/hr/mperhoc/hnefatafl/main-screen.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/hr/mperhoc/hnefatafl/main-screen.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,6 +25,7 @@
       <list>
         <option value="Enum" />
         <option value="FxmlFile" />
+        <option value="Interface" />
         <option value="Class" />
       </list>
     </option>
@@ -35,7 +37,7 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="CurrentFile" />
+    <option name="selectedTabId" value="QODANA_PROBLEMS_VIEW_TAB" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 4
@@ -57,6 +59,11 @@
     &quot;settings.editor.selected.configurable&quot;: &quot;Errors&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="hr.mperhoc.hnefatafl.chat.service" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="Hnefatafl [clean]" type="MavenRunConfiguration" factoryName="Maven" singleton="false" temporary="true">
       <MavenSettings>
@@ -103,6 +110,17 @@
       <updated>1698149284140</updated>
     </task>
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

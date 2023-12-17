@@ -40,7 +40,6 @@ public class HostGameController {
         PieceType selectedSide = attackerRadioButton.isSelected() ? PieceType.ATTACKER : PieceType.DEFENDER;
         Game.startServer(selectedSide);
 
-//        GUIUtils.loadScene(hostGameButton, "waiting-player-screen.fxml");
         GUIUtils.loadScene(hostGameButton, "main-screen.fxml");
     }
 }

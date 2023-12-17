@@ -4,7 +4,9 @@ import hr.mperhoc.hnefatafl.Game;
 import hr.mperhoc.hnefatafl.board.Board;
 import hr.mperhoc.hnefatafl.board.Tile;
 import hr.mperhoc.hnefatafl.board.state.VictoryChecker;
+import hr.mperhoc.hnefatafl.chat.service.RemoteChatService;
 import hr.mperhoc.hnefatafl.network.Client;
+import hr.mperhoc.hnefatafl.network.NetworkListener;
 import hr.mperhoc.hnefatafl.network.Server;
 import hr.mperhoc.hnefatafl.piece.Piece;
 import hr.mperhoc.hnefatafl.piece.PieceType;
@@ -15,11 +17,14 @@ import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Circle;
 
+import java.rmi.RemoteException;
 import java.util.List;
 
 public class GameController {
@@ -36,8 +41,14 @@ public class GameController {
     private Button howToPlayButton;
     @FXML
     private Button exportDocButton;
+    @FXML
+    private TextArea chatTextArea;
+    @FXML
+    private TextField messageTextField;
+    @FXML
+    private Button sendMessageButton;
 
-    private static GridPane boardGrid;
+    private GridPane boardGrid;
 
     // Game state
     private Board board;
@@ -45,12 +56,11 @@ public class GameController {
 
     // Legal move markers which remain hidden until the user wants to play a move
     private Circle[] moveMarkers;
-    private static ImageView[] pieceImages;
+    private ImageView[] pieceImages;
 
     private boolean multiplayer = false;
-    // TODO: Reimplement this to have client and server variable into one
-    private Server server;
-    private Client client;
+    private NetworkListener networkListener;
+    private RemoteChatService remoteChatService;
 
     public void initialize() {
         boardGrid = GUIUtils.createGridPane();
@@ -116,13 +126,17 @@ public class GameController {
         // Disables the New, Load and Save buttons
         if (multiplayer) {
             disableFileButtons();
-            if (Game.getServer() != null) {
-                this.server = Game.getServer();
-                server.setGameController(this);
-            } else {
-                this.client = Game.getClient();
-                client.setGameController(this);
-            }
+
+            boolean isServer = Game.isGameHost();
+
+            networkListener = isServer ? Game.getServer() : Game.getClient();
+            remoteChatService = isServer
+                    ? RmiUtils.startRmiChatServer()
+                    : RmiUtils.startRmiChatClient("localhost");
+
+            networkListener.setGameController(this);
+        } else {
+            disableTextChat();
         }
     }
 
@@ -130,6 +144,12 @@ public class GameController {
         newGameButton.setDisable(true);
         loadGameButton.setDisable(true);
         saveGameButton.setDisable(true);
+    }
+
+    private void disableTextChat() {
+        chatTextArea.setVisible(false);
+        messageTextField.setVisible(false);
+        sendMessageButton.setVisible(false);
     }
 
     private void regeneratePieceImages() {
@@ -173,7 +193,8 @@ public class GameController {
                     boolean isLegalMove = moveMarkers[yTile + xTile * Board.WIDTH].isVisible() && newValue;
                     // Or if the tile has the selected piece
                     if (wantsToMoveAPiece())
-                        shouldChangeHoverEffect = isLegalMove || (selectedPiece.getX() == xTile && selectedPiece.getY() == yTile && newValue);
+                        shouldChangeHoverEffect = isLegalMove || (selectedPiece.getX() == xTile && selectedPiece.getY() == yTile && newValue)
+                                && !board.isGameFinished();
 
                     String clr = shouldChangeHoverEffect ? tile.getType().getDarkerColor() : tile.getType().getColor();
                     backgroundTile.setStyle("-fx-background-color: #" + clr);
@@ -191,7 +212,7 @@ public class GameController {
         regeneratePieceImages();
 
         // Check for a winner here
-        checkWinner(false);
+        if (checkWinner(false) != null) newGameButton.setDisable(false);
     }
 
     private void deselectPiece(Pane tile, int x, int y) {
@@ -229,7 +250,7 @@ public class GameController {
     private void handleOnTileClick(Pane tile) {
         // Disallow any clicks if the game is finished
         if (board.isGameFinished()) return;
-        else if (multiplayer && Game.getPlayerSide() != board.getCurrentTurn()) return;
+        else if (multiplayer && networkListener.getPlayerSide() != board.getCurrentTurn()) return;
 
         int xTile = GridPane.getColumnIndex(tile);
         int yTile = GridPane.getRowIndex(tile);
@@ -254,9 +275,9 @@ public class GameController {
                     removePieces(captured.toArray(new Piece[0]));
                 }
 
-                checkWinner(true);
+                if (checkWinner(true) != null) newGameButton.setDisable(false);
 
-                if (multiplayer) Game.sendGameStatePacket(board);
+                if (multiplayer) networkListener.sendGameStatePacket(board);
 
                 deselectPiece(tile, xTile, yTile);
             } else {
@@ -306,6 +327,33 @@ public class GameController {
 
             board.removePiece(x, y);
             GUIUtils.removeImageFromCell(boardGrid, pieceImages[x + y * Board.WIDTH], x, y);
+        }
+    }
+
+    public void updateChatTextArea() {
+        try {
+            List<String> chatMessages = remoteChatService.getAllMessages();
+            chatTextArea.clear();
+
+            for (String msg : chatMessages) {
+                chatTextArea.appendText(msg + "\n");
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendChatMessage() {
+        String message = messageTextField.getText().trim();
+
+        try {
+            remoteChatService.sendMessage(networkListener.getPlayerSide().name() + ": " + message);
+            messageTextField.clear();
+
+            updateChatTextArea();
+            networkListener.sendChatPacket();
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
     }
 
