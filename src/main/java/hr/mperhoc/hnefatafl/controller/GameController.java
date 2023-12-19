@@ -132,7 +132,7 @@ public class GameController {
             networkListener = isServer ? Game.getServer() : Game.getClient();
             remoteChatService = isServer
                     ? RmiUtils.startRmiChatServer()
-                    : RmiUtils.startRmiChatClient("localhost");
+                    : RmiUtils.startRmiChatClient(Game.getServerAddress());
 
             networkListener.setGameController(this);
         } else {

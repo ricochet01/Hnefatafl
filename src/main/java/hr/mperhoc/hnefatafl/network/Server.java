@@ -1,6 +1,8 @@
 package hr.mperhoc.hnefatafl.network;
 
 import hr.mperhoc.hnefatafl.board.Board;
+import hr.mperhoc.hnefatafl.jndi.Config;
+import hr.mperhoc.hnefatafl.jndi.ConfigKey;
 import hr.mperhoc.hnefatafl.network.packet.*;
 import hr.mperhoc.hnefatafl.piece.PieceType;
 import javafx.application.Platform;
@@ -9,7 +11,6 @@ import java.io.*;
 import java.net.*;
 
 public class Server extends NetworkListener {
-    public static final int SERVER_PORT = 6502;
     private boolean clientConnected;
     private String clientIp = "";
 
@@ -30,7 +31,7 @@ public class Server extends NetworkListener {
 
     @Override
     public void listen() {
-        try (ServerSocket serverSocket = new ServerSocket(SERVER_PORT)) {
+        try (ServerSocket serverSocket = new ServerSocket(Config.readIntConfigValue(ConfigKey.SERVER_PORT))) {
             System.out.println("Server listening on port: " + serverSocket.getLocalPort());
 
             while (listening) {
@@ -48,12 +49,12 @@ public class Server extends NetworkListener {
 
     @Override
     public void sendGameStatePacket(Board board) {
-        send(new GameStatePacket(board), clientIp, Client.CLIENT_PORT);
+        send(new GameStatePacket(board), clientIp, Config.readIntConfigValue(ConfigKey.CLIENT_PORT));
     }
 
     @Override
     public void sendChatPacket() {
-        send(new ChatPacket(), clientIp, Client.CLIENT_PORT);
+        send(new ChatPacket(), clientIp, Config.readIntConfigValue(ConfigKey.CLIENT_PORT));
     }
 
     @Override
@@ -64,7 +65,7 @@ public class Server extends NetworkListener {
                 clientConnected = true;
 
                 PieceType opponent = playerSide == PieceType.ATTACKER ? PieceType.DEFENDER : PieceType.ATTACKER;
-                send(new ConnectionPacket(opponent), clientIp, Client.CLIENT_PORT);
+                send(new ConnectionPacket(opponent), clientIp, Config.readIntConfigValue(ConfigKey.CLIENT_PORT));
             }
             case PacketHeaders.GAME_STATE -> {
                 GameStatePacket gameStatePacket = (GameStatePacket) packet;

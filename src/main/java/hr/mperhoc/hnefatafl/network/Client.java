@@ -2,6 +2,8 @@ package hr.mperhoc.hnefatafl.network;
 
 import hr.mperhoc.hnefatafl.board.Board;
 import hr.mperhoc.hnefatafl.controller.GameController;
+import hr.mperhoc.hnefatafl.jndi.Config;
+import hr.mperhoc.hnefatafl.jndi.ConfigKey;
 import hr.mperhoc.hnefatafl.network.packet.*;
 import hr.mperhoc.hnefatafl.piece.PieceType;
 import javafx.application.Platform;
@@ -12,7 +14,6 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 public class Client extends NetworkListener {
-    public static final int CLIENT_PORT = 9456;
 
     // The IP address which we're connecting to
     private String ipAddress;
@@ -24,6 +25,10 @@ public class Client extends NetworkListener {
     public Client(String ipAddress, int port) {
         this.ipAddress = ipAddress;
         this.port = port;
+    }
+
+    public String getServerAddress() {
+        return ipAddress;
     }
 
     public synchronized boolean connect() {
@@ -40,12 +45,12 @@ public class Client extends NetworkListener {
     public void sendLoginPacket() {
         System.out.println("Sending login packet");
         // It's null because we don't know the player side; the server will send it back to us
-        send(new ConnectionPacket(null), ipAddress, Server.SERVER_PORT);
+        send(new ConnectionPacket(null), ipAddress, Config.readIntConfigValue(ConfigKey.SERVER_PORT));
     }
 
     @Override
     public void listen() {
-        try (ServerSocket serverSocket = new ServerSocket(CLIENT_PORT)) {
+        try (ServerSocket serverSocket = new ServerSocket(Config.readIntConfigValue(ConfigKey.CLIENT_PORT))) {
             System.out.println("Client listening on port: " + serverSocket.getLocalPort());
 
             while (listening) {
@@ -60,12 +65,12 @@ public class Client extends NetworkListener {
     @Override
     public void sendGameStatePacket(Board board) {
         Packet packet = new GameStatePacket(board);
-        send(packet, ipAddress, Server.SERVER_PORT);
+        send(packet, ipAddress, Config.readIntConfigValue(ConfigKey.SERVER_PORT));
     }
 
     @Override
     public void sendChatPacket() {
-        send(new ChatPacket(), ipAddress, Server.SERVER_PORT);
+        send(new ChatPacket(), ipAddress, Config.readIntConfigValue(ConfigKey.SERVER_PORT));
     }
 
     @Override

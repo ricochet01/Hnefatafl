@@ -6,14 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="e259fbd3-5849-40f1-b8e0-733335f62aa2" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/Game.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/controller/GameController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/controller/GameController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/controller/HostGameController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/controller/HostGameController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/network/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/network/Client.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/network/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/network/Server.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/network/packet/PacketHeaders.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/network/packet/PacketHeaders.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/network/packet/PingPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/network/packet/PingPacket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/hr/mperhoc/hnefatafl/main-screen.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/hr/mperhoc/hnefatafl/main-screen.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/util/RmiUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hr/mperhoc/hnefatafl/util/RmiUtils.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,9 +21,9 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Enum" />
         <option value="FxmlFile" />
         <option value="Interface" />
+        <option value="Enum" />
         <option value="Class" />
       </list>
     </option>
@@ -55,13 +53,19 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Korisnik/Downloads/TicTacToe-3RP3_-_5th_version/TicTacToe-3RP3&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/dev/Hnefatafl/lib/fscontext-4.5-b13.jar&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;Errors&quot;
   }
 }</component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
       <recent name="hr.mperhoc.hnefatafl.chat.service" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\dev\Hnefatafl\lib" />
     </key>
   </component>
   <component name="RunManager">

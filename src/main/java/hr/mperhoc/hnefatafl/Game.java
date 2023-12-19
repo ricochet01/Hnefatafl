@@ -1,5 +1,7 @@
 package hr.mperhoc.hnefatafl;
 
+import hr.mperhoc.hnefatafl.jndi.Config;
+import hr.mperhoc.hnefatafl.jndi.ConfigKey;
 import hr.mperhoc.hnefatafl.network.Client;
 import hr.mperhoc.hnefatafl.network.Server;
 import hr.mperhoc.hnefatafl.piece.PieceType;
@@ -72,6 +74,10 @@ public class Game extends Application {
         return client;
     }
 
+    public static String getServerAddress() {
+        return client.getServerAddress();
+    }
+
     public static void disconnect() {
         if (client != null) {
             client.disconnect();
@@ -80,7 +86,7 @@ public class Game extends Application {
     }
 
     public static boolean connect(String ip) {
-        client = new Client(ip, Server.SERVER_PORT);
+        client = new Client(ip, Config.readIntConfigValue(ConfigKey.SERVER_PORT));
         return client.connect();
     }
 
