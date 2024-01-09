@@ -38,7 +38,6 @@ public class Server extends NetworkListener {
                 Socket clientSocket = serverSocket.accept();
                 // System.out.println("Client connected from port: " + clientSocket.getPort());
                 if (clientIp.isEmpty()) this.clientIp = clientSocket.getInetAddress().getHostAddress();
-                System.out.println(clientIp);
 
                 Platform.runLater(() -> process(clientSocket));
             }

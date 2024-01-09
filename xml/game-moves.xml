@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<game-moves>
+    <move>
+        <piece-type>ATTACKER</piece-type>
+        <old-x>5</old-x>
+        <old-y>1</old-y>
+        <new-x>8</new-x>
+        <new-y>1</new-y>
+        <date-time>09.01.2024 20:06:37</date-time>
+    </move>
+    <move>
+        <piece-type>DEFENDER</piece-type>
+        <old-x>7</old-x>
+        <old-y>5</old-y>
+        <new-x>7</new-x>
+        <new-y>2</new-y>
+        <date-time>09.01.2024 20:06:39</date-time>
+    </move>
+    <move>
+        <piece-type>ATTACKER</piece-type>
+        <old-x>6</old-x>
+        <old-y>0</old-y>
+        <new-x>6</new-x>
+        <new-y>1</new-y>
+        <date-time>09.01.2024 20:06:41</date-time>
+    </move>
+    <move>
+        <piece-type>DEFENDER</piece-type>
+        <old-x>6</old-x>
+        <old-y>5</old-y>
+        <new-x>8</new-x>
+        <new-y>5</new-y>
+        <date-time>09.01.2024 20:06:42</date-time>
+    </move>
+    <move>
+        <piece-type>ATTACKER</piece-type>
+        <old-x>6</old-x>
+        <old-y>10</old-y>
+        <new-x>6</new-x>
+        <new-y>7</new-y>
+        <date-time>09.01.2024 20:06:43</date-time>
+    </move>
+    <move>
+        <piece-type>DEFENDER</piece-type>
+        <old-x>6</old-x>
+        <old-y>6</old-y>
+        <new-x>9</new-x>
+        <new-y>6</new-y>
+        <date-time>09.01.2024 20:06:44</date-time>
+    </move>
+    <move>
+        <piece-type>ATTACKER</piece-type>
+        <old-x>7</old-x>
+        <old-y>10</old-y>
+        <new-x>7</new-x>
+        <new-y>3</new-y>
+        <date-time>09.01.2024 20:06:47</date-time>
+    </move>
+    <move>
+        <piece-type>KING</piece-type>
+        <old-x>5</old-x>
+        <old-y>5</old-y>
+        <new-x>7</new-x>
+        <new-y>5</new-y>
+        <date-time>09.01.2024 20:06:48</date-time>
+    </move>
+    <move>
+        <piece-type>ATTACKER</piece-type>
+        <old-x>7</old-x>
+        <old-y>0</old-y>
+        <new-x>7</new-x>
+        <new-y>1</new-y>
+        <date-time>09.01.2024 20:06:49</date-time>
+    </move>
+    <move>
+        <piece-type>KING</piece-type>
+        <old-x>7</old-x>
+        <old-y>5</old-y>
+        <new-x>7</new-x>
+        <new-y>10</new-y>
+        <date-time>09.01.2024 20:06:51</date-time>
+    </move>
+    <move>
+        <piece-type>ATTACKER</piece-type>
+        <old-x>4</old-x>
+        <old-y>10</old-y>
+        <new-x>4</new-x>
+        <new-y>7</new-y>
+        <date-time>09.01.2024 20:06:55</date-time>
+    </move>
+    <move>
+        <piece-type>KING</piece-type>
+        <old-x>7</old-x>
+        <old-y>10</old-y>
+        <new-x>10</new-x>
+        <new-y>10</new-y>
+        <date-time>09.01.2024 20:06:56</date-time>
+    </move>
+</game-moves>

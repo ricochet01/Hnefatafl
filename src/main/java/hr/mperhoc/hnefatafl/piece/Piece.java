@@ -43,4 +43,9 @@ public class Piece implements Serializable {
     public PieceType getPieceType() {
         return pieceType;
     }
+
+    @Override
+    public String toString() {
+        return pieceType.name() + " @ (" + x + "," + y + ")";
+    }
 }

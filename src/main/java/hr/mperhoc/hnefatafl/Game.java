@@ -23,6 +23,8 @@ public class Game extends Application {
     private static Client client;
     private static boolean isHost = false;
 
+    private static boolean replayTheater = false;
+
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Game.class.getResource("menu-screen.fxml"));
@@ -92,6 +94,14 @@ public class Game extends Application {
 
     public static boolean canStartMultiplayerGame() {
         return server.canStartMultiplayerGame();
+    }
+
+    public static void setReplayTheaterState(boolean state) {
+        Game.replayTheater = state;
+    }
+
+    public static boolean isInReplayTheater() {
+        return replayTheater;
     }
 
     public static void main(String[] args) {

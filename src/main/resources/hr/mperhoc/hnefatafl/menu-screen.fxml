@@ -12,22 +12,27 @@
             <Font size="46.0" />
          </font>
       </Label>
-      <Button fx:id="playOfflineButton" layoutX="396.0" layoutY="239.0" mnemonicParsing="false" onAction="#playOffline" prefHeight="41.0" prefWidth="181.0" text="Play local">
+      <Button fx:id="playOfflineButton" layoutX="363.0" layoutY="168.0" mnemonicParsing="false" onAction="#playOffline" prefHeight="56.0" prefWidth="246.0" text="Play local">
          <font>
             <Font size="26.0" />
          </font>
       </Button>
-      <Button fx:id="hostGameButton" layoutX="396.0" layoutY="342.0" mnemonicParsing="false" onAction="#hostGame" prefHeight="41.0" prefWidth="181.0" text="Host">
+      <Button fx:id="hostGameButton" layoutX="363.0" layoutY="377.0" mnemonicParsing="false" onAction="#hostGame" prefHeight="56.0" prefWidth="246.0" text="Host">
          <font>
             <Font size="26.0" />
          </font>
       </Button>
-      <Button fx:id="joinGameButton" layoutX="396.0" layoutY="443.0" mnemonicParsing="false" onAction="#joinGame" prefHeight="41.0" prefWidth="181.0" text="Join">
+      <Button fx:id="joinGameButton" layoutX="363.0" layoutY="484.0" mnemonicParsing="false" onAction="#joinGame" prefHeight="56.0" prefWidth="246.0" text="Join">
          <font>
             <Font size="26.0" />
          </font>
       </Button>
-      <Button fx:id="quitGameButton" layoutX="396.0" layoutY="547.0" mnemonicParsing="false" onAction="#quitGame" prefHeight="56.0" prefWidth="181.0" text="Quit">
+      <Button fx:id="quitGameButton" layoutX="363.0" layoutY="590.0" mnemonicParsing="false" onAction="#quitGame" prefHeight="56.0" prefWidth="246.0" text="Quit">
+         <font>
+            <Font size="26.0" />
+         </font>
+      </Button>
+      <Button fx:id="replayGameButton" layoutX="363.0" layoutY="273.0" mnemonicParsing="false" onAction="#replayGame" prefHeight="56.0" prefWidth="246.0" text="Replay game">
          <font>
             <Font size="26.0" />
          </font>

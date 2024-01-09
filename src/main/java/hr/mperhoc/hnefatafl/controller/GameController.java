@@ -2,30 +2,37 @@ package hr.mperhoc.hnefatafl.controller;
 
 import hr.mperhoc.hnefatafl.Game;
 import hr.mperhoc.hnefatafl.board.Board;
+import hr.mperhoc.hnefatafl.board.GameMove;
 import hr.mperhoc.hnefatafl.board.Tile;
 import hr.mperhoc.hnefatafl.board.state.VictoryChecker;
 import hr.mperhoc.hnefatafl.chat.service.RemoteChatService;
-import hr.mperhoc.hnefatafl.network.Client;
 import hr.mperhoc.hnefatafl.network.NetworkListener;
-import hr.mperhoc.hnefatafl.network.Server;
 import hr.mperhoc.hnefatafl.piece.Piece;
 import hr.mperhoc.hnefatafl.piece.PieceType;
+import hr.mperhoc.hnefatafl.thread.GetLastGameMoveThread;
+import hr.mperhoc.hnefatafl.thread.SaveGameMoveThread;
 import hr.mperhoc.hnefatafl.util.*;
-import javafx.application.Platform;
+
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Circle;
+import javafx.util.Duration;
 
 import java.rmi.RemoteException;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class GameController {
     @FXML
@@ -47,6 +54,8 @@ public class GameController {
     private TextField messageTextField;
     @FXML
     private Button sendMessageButton;
+    @FXML
+    private Label lastGameMoveLabel;
 
     private GridPane boardGrid;
 
@@ -135,9 +144,50 @@ public class GameController {
                     : RmiUtils.startRmiChatClient(Game.getServerAddress());
 
             networkListener.setGameController(this);
+        } else if (!Game.isInReplayTheater()) { // Singleplayer
+            disableTextChat();
+
+            XmlUtils.createNewFile();
+
+            // Last game move thread
+            GetLastGameMoveThread getLastGameMoveThread
+                    = new GetLastGameMoveThread(lastGameMoveLabel);
+            Thread starterThread = new Thread(getLastGameMoveThread);
+            starterThread.setDaemon(true);
+            starterThread.start();
         } else {
             disableTextChat();
+            replayLastGame();
         }
+    }
+
+    private void replayLastGame() {
+        List<GameMove> moves = XmlUtils.getAllGameMoves();
+        // Not sure why there's an "atomic int" here...
+        AtomicInteger i = new AtomicInteger(0);
+
+        final Timeline replayer = new Timeline(
+                new KeyFrame(Duration.seconds(0),
+                        event -> {
+                            GameMove move = moves.get(i.get());
+                            Piece piece = move.getPieceMoved();
+
+                            // TODO: move piece here
+                            movePieceImage(piece.getX(), piece.getY(), move.getX(), move.getY());
+                            board.movePiece(move.getX(), move.getY(), piece);
+
+                            List<Piece> captured = board.checkForCapturedPieces(piece);
+                            if (!captured.isEmpty()) {
+                                removePieces(captured.toArray(new Piece[0]));
+                            }
+
+                            i.set(i.get() + 1); // Still don't know the purpose of this...
+                        }),
+                new KeyFrame(Duration.seconds(1))
+        );
+
+        replayer.setCycleCount(moves.size());
+        replayer.play();
     }
 
     private void disableFileButtons() {
@@ -212,7 +262,9 @@ public class GameController {
         regeneratePieceImages();
 
         // Check for a winner here
-        if (checkWinner(false) != null) newGameButton.setDisable(false);
+        if (checkWinner(false) != null) {
+            // newGameButton.setDisable(false);
+        }
     }
 
     private void deselectPiece(Pane tile, int x, int y) {
@@ -249,7 +301,7 @@ public class GameController {
 
     private void handleOnTileClick(Pane tile) {
         // Disallow any clicks if the game is finished
-        if (board.isGameFinished()) return;
+        if (board.isGameFinished() || Game.isInReplayTheater()) return;
         else if (multiplayer && networkListener.getPlayerSide() != board.getCurrentTurn()) return;
 
         int xTile = GridPane.getColumnIndex(tile);
@@ -268,6 +320,19 @@ public class GameController {
             if (board.legalMoveClicked(xTile, yTile, selectedPiece)) {
                 movePieceImage(selectedPiece.getX(), selectedPiece.getY(), xTile, yTile);
 
+                if (!multiplayer) {
+                    // We have to make a copy of the piece first
+                    // because the values change while we're writing it to the file
+                    Piece p = new Piece(selectedPiece.getX(), selectedPiece.getY(), selectedPiece.getPieceType());
+
+                    GameMove gameMove = new GameMove(p, xTile, yTile, LocalDateTime.now());
+                    XmlUtils.saveGameMove(gameMove);
+
+                    SaveGameMoveThread saveNewGameMoveThread = new SaveGameMoveThread(gameMove);
+                    Thread staterThread = new Thread(saveNewGameMoveThread);
+                    staterThread.start();
+                }
+
                 // Move the piece and check for captures
                 board.movePiece(xTile, yTile, selectedPiece);
                 List<Piece> captured = board.checkForCapturedPieces(selectedPiece);
@@ -279,11 +344,10 @@ public class GameController {
 
                 if (multiplayer) networkListener.sendGameStatePacket(board);
 
-                deselectPiece(tile, xTile, yTile);
             } else {
                 // If we click on a tile which is not a legal move, deselect the piece
-                deselectPiece(tile, xTile, yTile);
             }
+            deselectPiece(tile, xTile, yTile);
         }
 
         Piece piece = board.getPiece(xTile, yTile);
